@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="12dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".RegisterActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/register_now"
+        android:textAlignment="center"
+        android:textColor="@color/md_theme_primary"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/start_your_journey_with_fit_life"
+        android:textAlignment="center"
+        android:textColor="@color/md_theme_secondary"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@color/md_theme_secondaryContainer"
+        android:hint="@string/enter_your_name"
+        android:inputType="text"
+        android:padding="10dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/errMsgName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="@string/name_is_required"
+        android:textColor="@color/md_theme_error"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@color/md_theme_secondaryContainer"
+        android:hint="@string/enter_your_email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/errMsgEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="* Email is required!"
+        android:textColor="@color/md_theme_error"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@color/md_theme_secondaryContainer"
+        android:hint="@string/enter_your_password"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/errMsgPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="* Password is required!"
+        android:textColor="@color/md_theme_error"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/etConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@color/md_theme_secondaryContainer"
+        android:hint="@string/enter_confirm_password"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="@string/register"
+        android:textSize="18sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="@string/or"
+        android:textAlignment="center"
+        android:textColor="@color/md_theme_secondary"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:textSize="18sp" />
+</LinearLayout>
