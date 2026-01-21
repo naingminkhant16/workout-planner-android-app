@@ -2,9 +2,12 @@ package com.nmk.fitlife
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -33,7 +36,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var btnLogin: Button
     private lateinit var btnRegister: Button
-
+    private lateinit var cbShowPassword: CheckBox
     private val userViewModel: UserViewModel by viewModels {
         UserViewModelFactory(
             UserRepository(
@@ -66,6 +69,20 @@ class RegisterActivity : AppCompatActivity() {
         btnRegister.setOnClickListener {
             handleBtnRegisterOnClick()
         }
+
+        // listen show password checkbox
+        cbShowPassword.setOnCheckedChangeListener { _, checked ->
+            if (checked) {
+                etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                etConfirmPassword.transformationMethod =
+                    HideReturnsTransformationMethod.getInstance()
+            } else {
+                etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+            }
+            etPassword.setSelection(etPassword.text.length)
+            etConfirmPassword.setSelection(etConfirmPassword.text.length)
+        }
     }
 
     private fun initializeComponents() {
@@ -81,6 +98,8 @@ class RegisterActivity : AppCompatActivity() {
 
         btnRegister = findViewById(R.id.btnRegister)
         btnLogin = findViewById(R.id.btnLogin)
+
+        cbShowPassword = findViewById(R.id.cbShowPassword)
     }
 
     private fun handleBtnRegisterOnClick() {

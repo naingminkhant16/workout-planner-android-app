@@ -17,4 +17,12 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     suspend fun getUserByEmail(email: String): User? {
         return userRepository.getByEmail(email)
     }
+
+    fun verifyPassword(password: String, hashedPassword: String): Boolean {
+        return BCrypt.verifyer()
+            .verify(
+                password.toCharArray(),
+                hashedPassword.toCharArray()
+            ).verified
+    }
 }

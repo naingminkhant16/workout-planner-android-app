@@ -16,7 +16,7 @@
         android:text="@string/register_now"
         android:textAlignment="center"
         android:textColor="@color/md_theme_primary"
-        android:textSize="32sp"
+        android:textSize="36sp"
         android:textStyle="bold" />
 
     <TextView
@@ -66,7 +66,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="* Email is required!"
+        android:text="@string/email_is_required"
         android:textColor="@color/md_theme_error"
         android:visibility="gone" />
 
@@ -87,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="* Password is required!"
+        android:text="@string/password_is_required"
         android:textColor="@color/md_theme_error"
         android:visibility="gone" />
 
@@ -103,12 +103,22 @@
         android:padding="10dp"
         android:textSize="18sp" />
 
+    <CheckBox
+        android:id="@+id/cbShowPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/show_password"
+        android:textColor="@color/md_theme_secondary" />
+
     <Button
         android:id="@+id/btnRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"
+        android:backgroundTint="@color/md_theme_tertiaryContainer"
         android:text="@string/register"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 
     <TextView
@@ -118,12 +128,14 @@
         android:text="@string/or"
         android:textAlignment="center"
         android:textColor="@color/md_theme_secondary"
-        android:textSize="16sp" />
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/md_theme_tertiaryContainer"
         android:text="@string/login"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 </LinearLayout>

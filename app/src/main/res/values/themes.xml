@@ -49,5 +49,13 @@
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
 
+    <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
+        
+        <item name="android:textColorSecondary">@color/md_theme_background</item>
+
+        <item name="android:textColorPrimary">@color/md_theme_primary</item>
+
+    </style>
+
     <style name="Theme.FitLife" parent="Base.Theme.FitLife" />
 </resources>

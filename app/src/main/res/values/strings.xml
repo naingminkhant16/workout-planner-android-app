@@ -11,4 +11,7 @@
     <string name="enter_your_name">Enter Your Name</string>
     <string name="enter_confirm_password">Enter Confirm Password</string>
     <string name="name_is_required">* Name is required!</string>
+    <string name="email_is_required">* Email is required!</string>
+    <string name="password_is_required">* Password is required!</string>
+    <string name="show_password">Show Password</string>
 </resources>
