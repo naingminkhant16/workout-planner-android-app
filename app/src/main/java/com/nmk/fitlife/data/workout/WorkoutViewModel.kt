@@ -22,6 +22,26 @@ class WorkoutViewModel(
             initialValue = emptyList()
         )
 
+    fun getWorkoutsByUserId(userId: Int): StateFlow<List<Workout>> {
+        return workoutRepository.getByUserId(userId).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+    }
+
+    fun getWeeklyWorkouts(
+        userId: Int,
+        startDate: String,
+        endDate: String
+    ): StateFlow<List<WeeklyWorkoutDto>> {
+        return workoutRepository.getWeeklyWorkouts(userId, startDate, endDate).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+    }
+
     fun createWorkoutFromTemplate(template: Workout) {
         viewModelScope.launch {
             val newWorkout = template.copy(

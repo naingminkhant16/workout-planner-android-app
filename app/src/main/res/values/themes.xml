@@ -50,8 +50,8 @@
     </style>
 
     <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
-        
-        <item name="android:textColorSecondary">@color/md_theme_background</item>
+
+        <item name="android:textColorSecondary">@color/md_theme_secondary</item>
 
         <item name="android:textColorPrimary">@color/md_theme_primary</item>
 

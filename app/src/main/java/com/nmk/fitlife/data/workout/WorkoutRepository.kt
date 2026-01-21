@@ -11,8 +11,19 @@ class WorkoutRepository(
     private val exerciseDao: ExerciseDao,
     private val equipmentDao: EquipmentDao
 ) {
-
     fun getTemplateWorkouts(): Flow<List<Workout>> = workoutDao.getTemplateWorkouts()
+
+    fun getByUserId(userId: Int): Flow<List<Workout>> = workoutDao.getByUserId(userId)
+
+    fun getWeeklyWorkouts(
+        userId: Int,
+        startDate: String,
+        endDate: String
+    ): Flow<List<WeeklyWorkoutDto>> = workoutDao.getWeeklyWorkoutList(
+        userId,
+        startDate,
+        endDate
+    )
 
     suspend fun insertWorkoutWithDetails(
         workout: Workout,

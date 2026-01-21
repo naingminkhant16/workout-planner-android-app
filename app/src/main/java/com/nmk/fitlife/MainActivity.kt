@@ -2,8 +2,8 @@ package com.nmk.fitlife
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +18,20 @@ import com.nmk.fitlife.data.exercise.ExerciseRepository
 import com.nmk.fitlife.data.workout.WorkoutRepository
 import com.nmk.fitlife.data.workout.WorkoutViewModel
 import com.nmk.fitlife.data.workout.WorkoutViewModelFactory
-import com.nmk.fitlife.ui.TemplateWorkoutItemAdapter
+import com.nmk.fitlife.service.getEndOfWeekDate
+import com.nmk.fitlife.service.getStartOfWeekDate
+import com.nmk.fitlife.ui.adapter.TemplateWorkoutItemAdapter
+import com.nmk.fitlife.ui.adapter.WeeklyWorkoutItemAdapter
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
     private lateinit var templateWorkoutRV: RecyclerView
-    private lateinit var templateWorkoutItemAdapter: TemplateWorkoutItemAdapter
+    private lateinit var tvStartDate: TextView
+    private lateinit var tvEndDate: TextView
+    private lateinit var weeklyWorkoutRV: RecyclerView
+    private var AUTH_ID by Delegates.notNull<Int>()
+    private lateinit var tvNoWorkout: TextView
     private val workoutViewModel: WorkoutViewModel by viewModels {
         val db = AppDatabase.getDatabase(this@MainActivity)
         WorkoutViewModelFactory(
@@ -48,38 +56,79 @@ class MainActivity : AppCompatActivity() {
         }
 
         setSupportActionBar(findViewById(R.id.toolBar))
-//        val authPrefs = getSharedPreferences("auth_prefs", MODE_PRIVATE)
-//        val authId = authPrefs.getInt("id", 0)
-//        val authName = authPrefs.getString("name", "Default User")
-//        val authEmail = authPrefs.getString("email", "example@gmail.com")
+
+        val authPrefs = getSharedPreferences("auth_prefs", MODE_PRIVATE)
+        AUTH_ID = authPrefs.getInt("id", 0)
+
+        if (AUTH_ID == 0) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
+        tvNoWorkout = findViewById(R.id.tvNoWorkouts)
+
+        initializeDates()
+
+        loadRecyclerViews()
+
+        loadTemplateWorkouts()
+
+        loadWeeklyWorkouts()
+    }
+
+    private fun loadRecyclerViews() {
+        // Recycler Views
+        // Template workouts
         templateWorkoutRV = findViewById(R.id.rvTemplateWorkouts)
-        templateWorkoutRV.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        templateWorkoutRV.layoutManager = LinearLayoutManager(
+            this,
+            RecyclerView.HORIZONTAL,
+            false
+        )
+
+        // Weekly workouts
+        weeklyWorkoutRV = findViewById(R.id.rvWeeklyWorkouts)
+        weeklyWorkoutRV.layoutManager = LinearLayoutManager(
+            this,
+            RecyclerView.VERTICAL,
+            false
+        )
+    }
+
+    private fun loadTemplateWorkouts() {
         lifecycleScope.launch {
-            workoutViewModel.templateWorkouts.collect { workouts ->
-                templateWorkoutItemAdapter = TemplateWorkoutItemAdapter(this@MainActivity, workouts)
-                templateWorkoutRV.adapter = templateWorkoutItemAdapter
+            workoutViewModel.templateWorkouts.collect { templateWorkouts ->
+                templateWorkoutRV.adapter =
+                    TemplateWorkoutItemAdapter(this@MainActivity, templateWorkouts)
             }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.tool_bar_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.item_action_logout -> {
-                val editor = getSharedPreferences("auth_prefs", MODE_PRIVATE).edit()
-                editor.clear()
-                editor.apply()
-
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
-                true
+    private fun loadWeeklyWorkouts() {
+        lifecycleScope.launch {
+            workoutViewModel.getWeeklyWorkouts(
+                AUTH_ID,
+                getStartOfWeekDate(),
+                getEndOfWeekDate()
+            ).collect { weeklyWorkouts ->
+                tvNoWorkout.visibility = View.GONE
+                if (weeklyWorkouts.size > 0) {
+                    weeklyWorkoutRV.adapter =
+                        WeeklyWorkoutItemAdapter(this@MainActivity, weeklyWorkouts)
+                } else {
+                    tvNoWorkout.visibility = View.VISIBLE
+                    tvNoWorkout.setText(R.string.no_workout_fot_this_week_yet)
+                }
             }
-
-            else -> super.onOptionsItemSelected(item)
         }
     }
+
+    private fun initializeDates() {
+        tvStartDate = findViewById(R.id.tvStartDate)
+        tvEndDate = findViewById(R.id.tvEndDate)
+        tvStartDate.text = getStartOfWeekDate()
+        tvEndDate.text = getEndOfWeekDate()
+    }
+
+
 }

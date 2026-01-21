@@ -1,4 +1,4 @@
-package com.nmk.fitlife.ui
+package com.nmk.fitlife.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-
 import androidx.recyclerview.widget.RecyclerView
 import com.nmk.fitlife.R
 import com.nmk.fitlife.data.workout.Workout

@@ -24,6 +24,34 @@ interface WorkoutDao {
     @Query("SELECT * FROM workouts WHERE locationId=:locationId")
     fun getByLocationId(locationId: Int): Flow<List<Workout>>
 
+    @Query(
+        """
+    SELECT 
+        w.id AS workoutId,
+        w.title,
+        w.description,
+        w.isCompleted,
+        wpw.dayOfWeek,
+        wp.startDate,
+        wp.endDate
+    FROM workouts w
+    INNER JOIN weekly_plan_workouts wpw
+        ON w.id = wpw.workoutId
+    INNER JOIN weekly_plans wp
+        ON wp.id = wpw.weeklyPlanId
+    WHERE wp.startDate = :weekStart
+      AND wp.endDate = :weekEnd
+      AND wp.userId =:userId
+    ORDER BY wpw.dayOfWeek
+"""
+    )
+    fun getWeeklyWorkoutList(
+        userId: Int,
+        weekStart: String,
+        weekEnd: String
+    ): Flow<List<WeeklyWorkoutDto>>
+
+
     @Update
     suspend fun update(workout: Workout)
 

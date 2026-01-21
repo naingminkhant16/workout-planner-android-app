@@ -48,6 +48,14 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val authPrefs = getSharedPreferences("auth_prefs", MODE_PRIVATE)
+
+        val AUTH_ID = authPrefs.getInt("id", 0)
+
+        if (AUTH_ID != 0) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
 
         initializeComponents()
 

@@ -14,4 +14,12 @@
     <string name="email_is_required">* Email is required!</string>
     <string name="password_is_required">* Password is required!</string>
     <string name="show_password">Show Password</string>
+    <string name="workouts">Workouts</string>
+    <string name="add_your_favourite_workouts_to_weekly_plan">Add your favourite workouts to weekly plan</string>
+    <string name="my_weekly_workout_plans">My Weekly Workout Plans</string>
+    <string name="your_planned_workouts_for_this_week">Your planned workouts for this week</string>
+    <string name="dash">-</string>
+    <string name="logout">Logout</string>
+    <string name="no_workout_fot_this_week_yet">No Workout Fot This Week Yet!</string>
+    <string name="create_custom">Create Custom</string>
 </resources>
