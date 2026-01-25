@@ -3,8 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/item_my_workouts"
+        android:title="@string/my_workouts"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/item_action_logout"
         android:title="@string/logout"
         app:showAsAction="never" />
-
 </menu>

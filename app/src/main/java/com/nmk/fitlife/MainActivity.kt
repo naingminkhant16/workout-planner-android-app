@@ -1,8 +1,14 @@
 package com.nmk.fitlife
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -32,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var weeklyWorkoutRV: RecyclerView
     private var AUTH_ID by Delegates.notNull<Int>()
     private lateinit var tvNoWorkout: TextView
+    private lateinit var btnCreateCustomWorkout: Button
     private val workoutViewModel: WorkoutViewModel by viewModels {
         val db = AppDatabase.getDatabase(this@MainActivity)
         WorkoutViewModelFactory(
@@ -66,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         tvNoWorkout = findViewById(R.id.tvNoWorkouts)
+        btnCreateCustomWorkout = findViewById(R.id.btnCreateCustomWorkout)
 
         initializeDates()
 
@@ -74,10 +82,58 @@ class MainActivity : AppCompatActivity() {
         loadTemplateWorkouts()
 
         loadWeeklyWorkouts()
+
+        btnCreateCustomWorkout.setOnClickListener {
+            startActivity(Intent(this, CreateCustomWorkoutActivity::class.java))
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.tool_bar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.item_action_logout -> {
+                val editor = getSharedPreferences("auth_prefs", MODE_PRIVATE).edit()
+                editor.clear()
+                editor.apply()
+
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+                true
+            }
+
+            R.id.item_my_workouts -> {
+                startActivity(Intent(this, MyWorkoutsActivity::class.java))
+                finish()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        val logoutItem = menu?.findItem(R.id.item_action_logout)
+        if (logoutItem != null) {
+            val spanString = SpannableString(logoutItem.title.toString())
+            spanString.setSpan(ForegroundColorSpan(Color.RED), 0, spanString.length, 0)
+            logoutItem.title = spanString
+        }
+
+        val myWorkoutsItem = menu?.findItem(R.id.item_my_workouts)
+        if (myWorkoutsItem != null) {
+            val spanString = SpannableString(myWorkoutsItem.title.toString())
+            spanString.setSpan(ForegroundColorSpan(Color.WHITE), 0, spanString.length, 0)
+            myWorkoutsItem.title = spanString
+        }
+
+        return super.onPrepareOptionsMenu(menu)
     }
 
     private fun loadRecyclerViews() {
-        // Recycler Views
         // Template workouts
         templateWorkoutRV = findViewById(R.id.rvTemplateWorkouts)
         templateWorkoutRV.layoutManager = LinearLayoutManager(

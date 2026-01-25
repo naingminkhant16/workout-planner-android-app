@@ -22,4 +22,14 @@
     <string name="logout">Logout</string>
     <string name="no_workout_fot_this_week_yet">No Workout Fot This Week Yet!</string>
     <string name="create_custom">Create Custom</string>
+    <string name="add_equipment">+ Add Equipment</string>
+    <string name="add_exercise">+ Add Exercise</string>
+    <string name="create_custom_workout">Create Custom Workout</string>
+    <string name="workout_name">Workout Name</string>
+    <string name="workout_description">Workout Description</string>
+    <string name="exercises">Exercises</string>
+    <string name="equipment">Equipment</string>
+    <string name="save_workout">Save Workout</string>
+    <string name="my_workouts">My Workouts</string>
+    <string name="back">Back</string>
 </resources>

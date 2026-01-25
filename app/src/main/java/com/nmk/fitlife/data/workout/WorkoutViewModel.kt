@@ -2,7 +2,9 @@ package com.nmk.fitlife.data.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nmk.fitlife.data.equipment.Equipment
 import com.nmk.fitlife.data.equipment.EquipmentRepository
+import com.nmk.fitlife.data.exercise.Exercise
 import com.nmk.fitlife.data.exercise.ExerciseRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -62,6 +64,12 @@ class WorkoutViewModel(
                 exercises = exercises,
                 equipments = equipments
             )
+        }
+    }
+
+    fun createWorkout(workout: Workout, exercises: List<Exercise>, equipments: List<Equipment>) {
+        viewModelScope.launch {
+            workoutRepository.insertWorkoutWithDetails(workout, exercises, equipments)
         }
     }
 }
