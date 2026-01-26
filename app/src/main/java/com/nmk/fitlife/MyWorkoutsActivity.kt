@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nmk.fitlife.data.database.AppDatabase
 import com.nmk.fitlife.data.equipment.EquipmentRepository
 import com.nmk.fitlife.data.exercise.ExerciseRepository
+import com.nmk.fitlife.data.weekly_plan.WeeklyPlanRepository
 import com.nmk.fitlife.data.workout.WorkoutRepository
 import com.nmk.fitlife.data.workout.WorkoutViewModel
 import com.nmk.fitlife.data.workout.WorkoutViewModelFactory
@@ -32,7 +33,8 @@ class MyWorkoutsActivity : AppCompatActivity() {
                 db.equipmentDao()
             ),
             ExerciseRepository(db.exerciseDao()),
-            EquipmentRepository(db.equipmentDao())
+            EquipmentRepository(db.equipmentDao()),
+            WeeklyPlanRepository(db.weeklyPlanDao(), db.weeklyPlanWorkoutDao())
         )
     }
 

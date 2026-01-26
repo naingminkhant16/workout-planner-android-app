@@ -15,29 +15,53 @@ class WorkoutRepository(
 
     fun getByUserId(userId: Int): Flow<List<Workout>> = workoutDao.getByUserId(userId)
 
+    suspend fun getById(workoutId: Int): Workout? = workoutDao.getById(workoutId)
+
     fun getWeeklyWorkouts(
         userId: Int,
         startDate: String,
         endDate: String
     ): Flow<List<WeeklyWorkoutDto>> = workoutDao.getWeeklyWorkoutList(
         userId,
-        startDate,
-        endDate
+//        startDate,
+//        endDate
     )
 
     suspend fun insertWorkoutWithDetails(
         workout: Workout,
         exercises: List<Exercise>,
         equipments: List<Equipment>
-    ) {
+    ): Int {
         val workoutId = workoutDao.insert(workout).toInt()
 
         exercises.forEach {
-            exerciseDao.insert(it.copy(workoutId = workoutId))
+            exerciseDao.insert(it.copy(id = 0, workoutId = workoutId))
         }
 
         equipments.forEach {
-            equipmentDao.insert(it.copy(workoutId = workoutId))
+            equipmentDao.insert(it.copy(id = 0, workoutId = workoutId))
+        }
+        return workoutId
+    }
+
+    suspend fun updateWorkoutWithDetails(
+        workout: Workout,
+        exercises: List<Exercise>,
+        equipments: List<Equipment>
+    ) {
+        // Update workout
+        workoutDao.update(workout)
+
+        // Delete old exercises and equipments
+        exerciseDao.deleteByWorkoutId(workout.id)
+        equipmentDao.deleteByWorkoutId(workout.id)
+
+        exercises.forEach {
+            exerciseDao.insert(it.copy(workoutId = workout.id))
+        }
+
+        equipments.forEach {
+            equipmentDao.insert(it.copy(workoutId = workout.id))
         }
     }
 }

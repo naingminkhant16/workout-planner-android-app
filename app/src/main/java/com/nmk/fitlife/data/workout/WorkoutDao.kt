@@ -39,16 +39,24 @@ interface WorkoutDao {
         ON w.id = wpw.workoutId
     INNER JOIN weekly_plans wp
         ON wp.id = wpw.weeklyPlanId
-    WHERE wp.startDate = :weekStart
-      AND wp.endDate = :weekEnd
-      AND wp.userId =:userId
-    ORDER BY wpw.dayOfWeek
-"""
+    WHERE wp.userId = :userId
+     
+    ORDER BY 
+        CASE wpw.dayOfWeek
+            WHEN 'Monday' THEN 1
+            WHEN 'Tuesday' THEN 2
+            WHEN 'Wednesday' THEN 3
+            WHEN 'Thursday' THEN 4
+            WHEN 'Friday' THEN 5
+            WHEN 'Saturday' THEN 6
+            WHEN 'Sunday' THEN 7
+        END
+    """
     )
     fun getWeeklyWorkoutList(
         userId: Int,
-        weekStart: String,
-        weekEnd: String
+//        weekStart: String,
+//        weekEnd: String
     ): Flow<List<WeeklyWorkoutDto>>
 
 

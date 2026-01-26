@@ -32,4 +32,16 @@
     <string name="save_workout">Save Workout</string>
     <string name="my_workouts">My Workouts</string>
     <string name="back">Back</string>
+    <string name="update_workout">Update Workout</string>
+    <string name="add_to_weekly_plan">Add To Weekly Plan</string>
+
+    <string-array name="days_items">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
 </resources>

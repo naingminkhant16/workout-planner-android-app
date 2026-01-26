@@ -1,14 +1,15 @@
 package com.nmk.fitlife.ui.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.nmk.fitlife.R
+import com.nmk.fitlife.WorkoutDetailsActivity
 import com.nmk.fitlife.data.workout.Workout
 
 class TemplateWorkoutItemAdapter(private val context: Context, private val list: List<Workout>) :
@@ -38,7 +39,10 @@ class TemplateWorkoutItemAdapter(private val context: Context, private val list:
         holder.description.text = workout.description
 
         holder.btnView.setOnClickListener {
-            Toast.makeText(context, "View hit", Toast.LENGTH_SHORT).show()
+            val intent = Intent(context, WorkoutDetailsActivity::class.java)
+            intent.putExtra("workoutId", workout.id)
+            intent.putExtra("isTemplate", workout.isTemplate)
+            context.startActivity(intent)
         }
     }
 

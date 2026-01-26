@@ -11,8 +11,12 @@ interface WeeklyPlanDao {
     @Insert
     suspend fun insert(plan: WeeklyPlan): Long
 
-    @Query("SELECT * FROM weekly_plans WHERE userId=:userId")
-    fun getByUserId(userId: Int): Flow<List<WeeklyPlan>>
+    @Query("SELECT * FROM weekly_plans WHERE userId=:userId AND startDate=:startDate AND endDate=:endDate")
+    fun getByUserIdAndStartEndDates(
+        userId: Int,
+        startDate: String,
+        endDate: String
+    ): Flow<List<WeeklyPlan>>
 
     @Delete
     suspend fun delete(plan: WeeklyPlan)

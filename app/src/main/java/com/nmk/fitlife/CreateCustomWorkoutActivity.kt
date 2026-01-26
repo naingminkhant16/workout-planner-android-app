@@ -18,6 +18,7 @@ import com.nmk.fitlife.data.equipment.Equipment
 import com.nmk.fitlife.data.equipment.EquipmentRepository
 import com.nmk.fitlife.data.exercise.Exercise
 import com.nmk.fitlife.data.exercise.ExerciseRepository
+import com.nmk.fitlife.data.weekly_plan.WeeklyPlanRepository
 import com.nmk.fitlife.data.workout.Workout
 import com.nmk.fitlife.data.workout.WorkoutRepository
 import com.nmk.fitlife.data.workout.WorkoutViewModel
@@ -43,7 +44,8 @@ class CreateCustomWorkoutActivity : AppCompatActivity() {
                 db.equipmentDao()
             ),
             ExerciseRepository(db.exerciseDao()),
-            EquipmentRepository(db.equipmentDao())
+            EquipmentRepository(db.equipmentDao()),
+            WeeklyPlanRepository(db.weeklyPlanDao(), db.weeklyPlanWorkoutDao())
         )
     }
 
@@ -272,5 +274,4 @@ class CreateCustomWorkoutActivity : AppCompatActivity() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
-    
 }
