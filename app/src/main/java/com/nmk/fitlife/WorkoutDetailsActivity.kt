@@ -83,7 +83,6 @@ class WorkoutDetailsActivity : AppCompatActivity() {
 
         if (isTemplate) {
             fabEdit.visibility = View.GONE
-            btnAddToWeeklyPlan.visibility = View.VISIBLE
         }
 
         loadWorkoutData()
@@ -351,11 +350,15 @@ class WorkoutDetailsActivity : AppCompatActivity() {
 
                 try {
                     val w = workout ?: return@setPositiveButton
-                    workoutViewModel.createWorkoutFromTemplate(
-                        w,
-                        authId = authId,
-                        dayOfWeek = dayOfWeek
-                    )
+                    if (w.isTemplate) {
+                        workoutViewModel.createWorkoutFromTemplate(
+                            w,
+                            authId = authId,
+                            dayOfWeek = dayOfWeek
+                        )
+                    } else {
+                        workoutViewModel.addToWeeklyPlan(w, authId, dayOfWeek)
+                    }
 
                     Toast.makeText(
                         this@WorkoutDetailsActivity,

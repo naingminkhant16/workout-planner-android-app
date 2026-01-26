@@ -12,7 +12,7 @@ interface WorkoutDao {
     @Insert
     suspend fun insert(workout: Workout): Long
 
-    @Query("SELECT * FROM workouts WHERE userId=:userId")
+    @Query("SELECT * FROM workouts w WHERE w.userId=:userId AND w.isCompleted=0 AND NOT EXISTS(SELECT 1 FROM weekly_plan_workouts wpw WHERE wpw.workoutId=w.id)")
     fun getByUserId(userId: Int): Flow<List<Workout>>
 
     @Query("SELECT * FROM workouts WHERE id=:id")
@@ -40,7 +40,8 @@ interface WorkoutDao {
     INNER JOIN weekly_plans wp
         ON wp.id = wpw.weeklyPlanId
     WHERE wp.userId = :userId
-     
+     AND startDate=:weekStart
+     AND endDate=:weekEnd
     ORDER BY 
         CASE wpw.dayOfWeek
             WHEN 'Monday' THEN 1
@@ -55,8 +56,8 @@ interface WorkoutDao {
     )
     fun getWeeklyWorkoutList(
         userId: Int,
-//        weekStart: String,
-//        weekEnd: String
+        weekStart: String,
+        weekEnd: String
     ): Flow<List<WeeklyWorkoutDto>>
 
 

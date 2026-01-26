@@ -82,7 +82,7 @@ class WorkoutViewModel(
                     exercises = exercises,
                     equipments = equipments
                 )
-                println("New wk id " + newWorkoutId.toString())
+
                 // Get current weekly plan
                 val weeklyPlans = weeklyPlanRepository
                     .getByUserIdAndStartEndDates(authId)
@@ -106,6 +106,29 @@ class WorkoutViewModel(
                 throw Exception(e)
             }
         }
+    }
+
+
+    fun addToWeeklyPlan(workout: Workout, authId: Int, dayOfWeek: String) {
+        viewModelScope.launch {
+            val weeklyPlans = weeklyPlanRepository
+                .getByUserIdAndStartEndDates(authId)
+                .first()
+
+            val weeklyPlanId = if (weeklyPlans.isEmpty())
+                weeklyPlanRepository.createNewWeeklyPlan(authId).toInt()
+            else
+                weeklyPlans.first().id
+
+            weeklyPlanRepository.createWeeklyPlanWorkout(
+                WeeklyPlanWorkout(
+                    weeklyPlanId = weeklyPlanId,
+                    workoutId = workout.id,
+                    dayOfWeek = dayOfWeek
+                )
+            )
+        }
+
     }
 
 

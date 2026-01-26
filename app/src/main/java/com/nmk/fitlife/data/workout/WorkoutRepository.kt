@@ -23,8 +23,8 @@ class WorkoutRepository(
         endDate: String
     ): Flow<List<WeeklyWorkoutDto>> = workoutDao.getWeeklyWorkoutList(
         userId,
-//        startDate,
-//        endDate
+        startDate,
+        endDate
     )
 
     suspend fun insertWorkoutWithDetails(
