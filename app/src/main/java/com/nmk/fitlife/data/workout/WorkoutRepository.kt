@@ -64,4 +64,9 @@ class WorkoutRepository(
             equipmentDao.insert(it.copy(workoutId = workout.id))
         }
     }
+
+    suspend fun makeWorkoutAsCompleted(workoutId: Int) = workoutDao.markWorkoutCompleted(workoutId)
+
+    suspend fun removeWorkoutFromWeeklyPlan(workoutId: Int) =
+        workoutDao.removeWorkoutFromWeeklyPlan(workoutId)
 }

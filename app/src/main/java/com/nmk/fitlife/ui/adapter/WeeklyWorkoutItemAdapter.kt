@@ -1,13 +1,14 @@
 package com.nmk.fitlife.ui.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.nmk.fitlife.R
+import com.nmk.fitlife.WorkoutDetailsActivity
 import com.nmk.fitlife.data.workout.WeeklyWorkoutDto
 import com.nmk.fitlife.service.getEndOfWeekDate
 import com.nmk.fitlife.service.getStartOfWeekDate
@@ -46,9 +47,15 @@ class WeeklyWorkoutItemAdapter(
         holder.tvDayOfWeek.text = workout.dayOfWeek
 
         holder.itemView.setOnClickListener {
-            Toast.makeText(context, "Hit", Toast.LENGTH_SHORT).show()
+            val intent = Intent(context, WorkoutDetailsActivity::class.java)
+            intent.putExtra("workoutId", workout.workoutId)
+            intent.putExtra("isTemplate", false)
+            intent.putExtra("alreadyAdded", true)
+            context.startActivity(intent)
         }
     }
+
+    fun getItem(position: Int): WeeklyWorkoutDto = list[position]
 
     override fun getItemCount(): Int {
         return list.size

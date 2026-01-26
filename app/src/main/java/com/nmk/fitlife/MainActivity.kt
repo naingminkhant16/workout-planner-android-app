@@ -1,7 +1,9 @@
 package com.nmk.fitlife
 
 import android.content.Intent
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -10,12 +12,16 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nmk.fitlife.data.database.AppDatabase
@@ -40,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private var AUTH_ID by Delegates.notNull<Int>()
     private lateinit var tvNoWorkout: TextView
     private lateinit var btnCreateCustomWorkout: Button
+    private lateinit var weeklyWorkoutItemAdapter: WeeklyWorkoutItemAdapter
     private val workoutViewModel: WorkoutViewModel by viewModels {
         val db = AppDatabase.getDatabase(this@MainActivity)
         WorkoutViewModelFactory(
@@ -151,6 +158,8 @@ class MainActivity : AppCompatActivity() {
             RecyclerView.VERTICAL,
             false
         )
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(weeklyWorkoutRV)
     }
 
     private fun loadTemplateWorkouts() {
@@ -172,8 +181,13 @@ class MainActivity : AppCompatActivity() {
                 println(weeklyWorkouts)
                 if (weeklyWorkouts.isNotEmpty()) {
                     tvNoWorkout.visibility = View.GONE
-                    weeklyWorkoutRV.adapter =
-                        WeeklyWorkoutItemAdapter(this@MainActivity, weeklyWorkouts)
+
+                    weeklyWorkoutItemAdapter = WeeklyWorkoutItemAdapter(
+                        this@MainActivity,
+                        weeklyWorkouts
+                    )
+
+                    weeklyWorkoutRV.adapter = weeklyWorkoutItemAdapter
                 } else {
                     tvNoWorkout.visibility = View.VISIBLE
                     tvNoWorkout.setText(R.string.no_workout_fot_this_week_yet)
@@ -189,5 +203,138 @@ class MainActivity : AppCompatActivity() {
         tvEndDate.text = getEndOfWeekDate()
     }
 
+    val swipeHandler =
+        object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
+            private val completeColor = "#4CAF50".toColorInt()
+            private val deleteColor = "#F44336".toColorInt()
+            private val background = ColorDrawable()
+
+
+            override fun getSwipeDirs(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                val position = viewHolder.adapterPosition
+                if (position == RecyclerView.NO_POSITION) return 0
+
+                val workout = weeklyWorkoutItemAdapter.getItem(position)
+
+                if (workout.isCompleted) {
+                    return 0
+                }
+
+                return ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val currentWorkout = weeklyWorkoutItemAdapter.getItem(position)
+
+
+                if (direction == ItemTouchHelper.RIGHT) {
+                    // Make completed
+                    workoutViewModel.makeWorkoutAsCompleted(currentWorkout.workoutId)
+
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Workout completed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                } else if (direction == ItemTouchHelper.LEFT) {
+                    // Remove from weekly plan
+                    workoutViewModel.removeWorkoutFromWeeklyPlan(currentWorkout.workoutId)
+
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Removed from weekly plan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val position = viewHolder.adapterPosition
+                if (position == RecyclerView.NO_POSITION) return
+
+                val workout = weeklyWorkoutItemAdapter.getItem(position)
+                if (workout.isCompleted) return
+                
+                val itemView = viewHolder.itemView
+                val iconMargin = (itemView.height - 64) / 2
+
+                if (dX > 0) {
+                    // RIGHT swipe (Complete)
+                    background.color = completeColor
+                    background.setBounds(
+                        itemView.left,
+                        itemView.top,
+                        itemView.left + dX.toInt(),
+                        itemView.bottom
+                    )
+                    background.draw(c)
+
+                    val icon = ContextCompat.getDrawable(
+                        recyclerView.context,
+                        R.drawable.outline_check_24
+                    )!!
+                    val iconTop = itemView.top + (itemView.height - icon.intrinsicHeight) / 2
+                    val iconLeft = itemView.left + iconMargin
+                    val iconRight = iconLeft + icon.intrinsicWidth
+                    val iconBottom = iconTop + icon.intrinsicHeight
+
+                    icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                    icon.draw(c)
+
+                } else if (dX < 0) {
+                    // LEFT swipe (Delete)
+                    background.color = deleteColor
+                    background.setBounds(
+                        itemView.right + dX.toInt(),
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
+                    )
+                    background.draw(c)
+
+                    val icon = ContextCompat.getDrawable(
+                        recyclerView.context,
+                        R.drawable.outline_delete_24
+                    )!!
+                    val iconTop = itemView.top + (itemView.height - icon.intrinsicHeight) / 2
+                    val iconRight = itemView.right - iconMargin
+                    val iconLeft = iconRight - icon.intrinsicWidth
+                    val iconBottom = iconTop + icon.intrinsicHeight
+
+                    icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                    icon.draw(c)
+                }
+
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+            }
+        }
 }

@@ -78,11 +78,15 @@ class WorkoutDetailsActivity : AppCompatActivity() {
 
         workoutId = intent.getIntExtra("workoutId", 0)
         val isTemplate = intent.getBooleanExtra("isTemplate", true)
-
+        val alreadyAddedToPlan = intent.getBooleanExtra("alreadyAdded", false)
         updateUIState()
 
         if (isTemplate) {
             fabEdit.visibility = View.GONE
+        }
+
+        if (alreadyAddedToPlan) {
+            btnAddToWeeklyPlan.visibility = View.GONE
         }
 
         loadWorkoutData()
@@ -100,7 +104,7 @@ class WorkoutDetailsActivity : AppCompatActivity() {
         }
 
         ivBack.setOnClickListener {
-            val activity = if (isTemplate) MainActivity::class.java
+            val activity = if (isTemplate or alreadyAddedToPlan) MainActivity::class.java
             else MyWorkoutsActivity::class.java
 
             startActivity(

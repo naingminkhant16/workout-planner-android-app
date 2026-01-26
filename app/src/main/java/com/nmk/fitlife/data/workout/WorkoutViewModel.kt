@@ -128,7 +128,6 @@ class WorkoutViewModel(
                 )
             )
         }
-
     }
 
 
@@ -160,4 +159,15 @@ class WorkoutViewModel(
         equipments: List<Equipment>
     ) = workoutRepository.updateWorkoutWithDetails(updatedWorkout, exercises, equipments)
 
+    fun makeWorkoutAsCompleted(workoutId: Int) {
+        viewModelScope.launch {
+            workoutRepository.makeWorkoutAsCompleted(workoutId)
+        }
+    }
+
+    fun removeWorkoutFromWeeklyPlan(workoutId: Int) {
+        viewModelScope.launch {
+            workoutRepository.removeWorkoutFromWeeklyPlan(workoutId)
+        }
+    }
 }

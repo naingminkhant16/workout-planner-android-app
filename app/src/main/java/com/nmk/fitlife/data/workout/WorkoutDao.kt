@@ -66,4 +66,10 @@ interface WorkoutDao {
 
     @Delete
     suspend fun delete(workout: Workout)
+
+    @Query("UPDATE workouts SET isCompleted = 1 WHERE id = :workoutId")
+    suspend fun markWorkoutCompleted(workoutId: Int)
+
+    @Query("DELETE FROM weekly_plan_workouts WHERE workoutId = :workoutId")
+    suspend fun removeWorkoutFromWeeklyPlan(workoutId: Int)
 }
