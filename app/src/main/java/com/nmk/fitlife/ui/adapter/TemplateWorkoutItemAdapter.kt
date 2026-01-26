@@ -46,6 +46,8 @@ class TemplateWorkoutItemAdapter(private val context: Context, private val list:
         }
     }
 
+    fun getItem(position: Int) = list[position]
+
     override fun getItemCount(): Int {
         return list.size
     }

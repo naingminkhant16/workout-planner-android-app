@@ -170,4 +170,10 @@ class WorkoutViewModel(
             workoutRepository.removeWorkoutFromWeeklyPlan(workoutId)
         }
     }
+
+    fun delete(workout: Workout) {
+        viewModelScope.launch {
+            workoutRepository.deleteWorkout(workout)
+        }
+    }
 }

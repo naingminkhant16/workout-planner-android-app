@@ -69,4 +69,6 @@ class WorkoutRepository(
 
     suspend fun removeWorkoutFromWeeklyPlan(workoutId: Int) =
         workoutDao.removeWorkoutFromWeeklyPlan(workoutId)
+
+    suspend fun deleteWorkout(workout: Workout) = workoutDao.delete(workout)
 }
