@@ -15,9 +15,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +30,7 @@ import com.nmk.fitlife.data.database.AppDatabase
 import com.nmk.fitlife.data.equipment.EquipmentRepository
 import com.nmk.fitlife.data.exercise.ExerciseRepository
 import com.nmk.fitlife.data.weekly_plan.WeeklyPlanRepository
+import com.nmk.fitlife.data.workout.WeeklyWorkoutDto
 import com.nmk.fitlife.data.workout.WorkoutRepository
 import com.nmk.fitlife.data.workout.WorkoutViewModel
 import com.nmk.fitlife.data.workout.WorkoutViewModelFactory
@@ -35,6 +38,8 @@ import com.nmk.fitlife.service.getEndOfWeekDate
 import com.nmk.fitlife.service.getStartOfWeekDate
 import com.nmk.fitlife.ui.adapter.TemplateWorkoutItemAdapter
 import com.nmk.fitlife.ui.adapter.WeeklyWorkoutItemAdapter
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
@@ -185,7 +190,9 @@ class MainActivity : AppCompatActivity() {
                     weeklyWorkoutItemAdapter = WeeklyWorkoutItemAdapter(
                         this@MainActivity,
                         weeklyWorkouts
-                    )
+                    ) { workout ->
+                        showShareOptions(workout)
+                    }
 
                     weeklyWorkoutRV.adapter = weeklyWorkoutItemAdapter
                 } else {
@@ -194,6 +201,70 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showShareOptions(weeklyWorkout: WeeklyWorkoutDto) {
+        AlertDialog.Builder(this)
+            .setTitle("Share Workout")
+            .setItems(
+                arrayOf(
+                    "Share exercise list via SMS",
+                    "Share equipment list via SMS"
+                )
+            ) { _, which ->
+                when (which) {
+                    0 -> shareExerciseList(weeklyWorkout)
+                    1 -> shareEquipmentList(weeklyWorkout)
+                }
+            }
+            .show()
+    }
+
+    private fun shareExerciseList(weeklyWorkoutDto: WeeklyWorkoutDto) {
+        lifecycleScope.launch {
+            val exercises = workoutViewModel.getExercisesByWorkoutId(weeklyWorkoutDto.workoutId)
+                .filter { it.isNotEmpty() }
+                .first()
+            
+            val message = buildString {
+                append("🏋️ Workout: ${weeklyWorkoutDto.title}\n")
+                append("📅 Day: ${weeklyWorkoutDto.dayOfWeek}\n\n")
+                append("Exercises:\n")
+
+                exercises.forEachIndexed { index, ex ->
+                    append("${index + 1}. ${ex.name} - ${ex.sets}x${ex.reps}\n")
+                }
+            }
+            sendSms(message)
+        }
+    }
+
+    private fun shareEquipmentList(weeklyWorkoutDto: WeeklyWorkoutDto) {
+        lifecycleScope.launch {
+            val equipments =
+                workoutViewModel.getEquipmentsByWorkoutId(weeklyWorkoutDto.workoutId)
+                    .filter { it.isNotEmpty() }
+                    .first()
+
+            val message = buildString {
+                append("🏋️ Workout: ${weeklyWorkoutDto.title}\n")
+                append("📅 Day: ${weeklyWorkoutDto.dayOfWeek}\n\n")
+                append("Equipment Needed:\n")
+
+                equipments.forEachIndexed { index, eq ->
+                    append("${index + 1}. ${eq.name}\n")
+                }
+            }
+            sendSms(message)
+        }
+    }
+
+    private fun sendSms(message: String) {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = "smsto:".toUri()
+            putExtra("sms_body", message)
+        }
+        startActivity(intent)
     }
 
     private fun initializeDates() {
@@ -275,7 +346,7 @@ class MainActivity : AppCompatActivity() {
 
                 val workout = weeklyWorkoutItemAdapter.getItem(position)
                 if (workout.isCompleted) return
-                
+
                 val itemView = viewHolder.itemView
                 val iconMargin = (itemView.height - 64) / 2
 

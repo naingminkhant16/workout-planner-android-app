@@ -15,7 +15,8 @@ import com.nmk.fitlife.service.getStartOfWeekDate
 
 class WeeklyWorkoutItemAdapter(
     private val context: Context,
-    private val list: List<WeeklyWorkoutDto>
+    private val list: List<WeeklyWorkoutDto>,
+    private val onLongPress: (WeeklyWorkoutDto) -> Unit
 ) :
     RecyclerView.Adapter<WeeklyWorkoutItemAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
@@ -52,6 +53,11 @@ class WeeklyWorkoutItemAdapter(
             intent.putExtra("isTemplate", false)
             intent.putExtra("alreadyAdded", true)
             context.startActivity(intent)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onLongPress(workout)
+            true
         }
     }
 
