@@ -34,6 +34,7 @@
     <string name="back">Back</string>
     <string name="update_workout">Update Workout</string>
     <string name="add_to_weekly_plan">Add To Weekly Plan</string>
+    <string name="my_records">My Records</string>
 
     <string-array name="days_items">
         <item>Monday</item>

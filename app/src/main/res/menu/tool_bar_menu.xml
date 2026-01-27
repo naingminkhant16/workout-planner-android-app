@@ -6,6 +6,12 @@
         android:id="@+id/item_my_workouts"
         android:title="@string/my_workouts"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/item_my_records"
+        android:title="@string/my_records"
+        app:showAsAction="never" />
+    
     <item
         android:id="@+id/item_action_logout"
         android:title="@string/logout"

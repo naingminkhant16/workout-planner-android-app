@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FitLife">
         <activity
+            android:name=".MyRecordsActivity"
+            android:exported="false" />
+        <activity
             android:name=".WorkoutDetailsActivity"
             android:exported="false" />
         <activity

@@ -125,6 +125,12 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
+            R.id.item_my_records -> {
+                startActivity(Intent(this, MyRecordsActivity::class.java))
+                finish()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -142,6 +148,13 @@ class MainActivity : AppCompatActivity() {
             val spanString = SpannableString(myWorkoutsItem.title.toString())
             spanString.setSpan(ForegroundColorSpan(Color.WHITE), 0, spanString.length, 0)
             myWorkoutsItem.title = spanString
+        }
+
+        val myRecordsItem = menu?.findItem(R.id.item_my_records)
+        if (myRecordsItem != null) {
+            val spanString = SpannableString(myRecordsItem.title.toString())
+            spanString.setSpan(ForegroundColorSpan(Color.WHITE), 0, spanString.length, 0)
+            myRecordsItem.title = spanString
         }
 
         return super.onPrepareOptionsMenu(menu)
@@ -225,7 +238,7 @@ class MainActivity : AppCompatActivity() {
             val exercises = workoutViewModel.getExercisesByWorkoutId(weeklyWorkoutDto.workoutId)
                 .filter { it.isNotEmpty() }
                 .first()
-            
+
             val message = buildString {
                 append("🏋️ Workout: ${weeklyWorkoutDto.title}\n")
                 append("📅 Day: ${weeklyWorkoutDto.dayOfWeek}\n\n")
