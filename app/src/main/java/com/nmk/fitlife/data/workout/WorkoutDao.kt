@@ -60,6 +60,30 @@ interface WorkoutDao {
         weekEnd: String
     ): Flow<List<WeeklyWorkoutDto>>
 
+    @Query(
+        """
+    SELECT 
+        w.id AS workoutId,
+        w.title,
+        w.description,
+        w.isCompleted,
+        wpw.dayOfWeek,
+        wp.startDate,
+        wp.endDate
+    FROM workouts w
+    INNER JOIN weekly_plan_workouts wpw
+        ON w.id = wpw.workoutId
+    INNER JOIN weekly_plans wp
+        ON wp.id = wpw.weeklyPlanId
+    WHERE wp.userId = :userId
+    ORDER BY 
+       wp.id DESC
+    """
+    )
+    fun getWorkoutList(
+        userId: Int
+    ): Flow<List<WeeklyWorkoutDto>>
+
 
     @Update
     suspend fun update(workout: Workout)

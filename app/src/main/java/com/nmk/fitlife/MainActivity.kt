@@ -334,13 +334,26 @@ class MainActivity : AppCompatActivity() {
 
                 } else if (direction == ItemTouchHelper.LEFT) {
                     // Remove from weekly plan
-                    workoutViewModel.removeWorkoutFromWeeklyPlan(currentWorkout.workoutId)
+                    AlertDialog.Builder(this@MainActivity)
+                        .setTitle("Are you sure?")
+                        .setMessage("Do you really want to remove this workout from Weekly plan?")
+                        .setPositiveButton("Yes") { dialog, _ ->
+                            workoutViewModel.removeWorkoutFromWeeklyPlan(currentWorkout.workoutId)
+                            dialog.dismiss()
 
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Removed from weekly plan",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                            weeklyWorkoutItemAdapter.notifyDataSetChanged()
+
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Removed from weekly plan",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        .setNegativeButton("No") { dialog, _ ->
+                            weeklyWorkoutItemAdapter.notifyDataSetChanged()
+                            dialog.dismiss()
+                        }
+                        .show()
                 }
             }
 

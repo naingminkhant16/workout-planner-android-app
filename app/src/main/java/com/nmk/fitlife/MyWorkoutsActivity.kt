@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
@@ -103,7 +104,19 @@ class MyWorkoutsActivity : AppCompatActivity() {
                 val position = viewHolder.adapterPosition
                 val workout = templateWorkoutItemAdapter.getItem(position)
                 if (direction == ItemTouchHelper.LEFT) {
-                    workoutViewModel.delete(workout)
+
+                    AlertDialog.Builder(this@MyWorkoutsActivity)
+                        .setTitle("Are you sure?")
+                        .setMessage("Do you really want to delete this workout?")
+                        .setPositiveButton("Yes") { dialog, _ ->
+                            workoutViewModel.delete(workout)
+                            dialog.dismiss()
+                            templateWorkoutItemAdapter.notifyDataSetChanged()
+                        }
+                        .setNegativeButton("No") { dialog, _ ->
+                            dialog.dismiss()
+                            templateWorkoutItemAdapter.notifyDataSetChanged()
+                        }
 
                     Toast.makeText(this@MyWorkoutsActivity, "Workout deleted", Toast.LENGTH_SHORT)
                         .show()

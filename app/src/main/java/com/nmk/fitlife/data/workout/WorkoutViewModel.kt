@@ -48,6 +48,16 @@ class WorkoutViewModel(
         )
     }
 
+    fun getWorkouts(
+        userId: Int,
+    ): StateFlow<List<WeeklyWorkoutDto>> {
+        return workoutRepository.getWorkouts(userId).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun createWorkoutFromTemplate(
         template: Workout,
