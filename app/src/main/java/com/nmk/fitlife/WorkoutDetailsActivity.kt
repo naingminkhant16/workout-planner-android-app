@@ -1,12 +1,16 @@
 package com.nmk.fitlife
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -151,7 +155,14 @@ class WorkoutDetailsActivity : AppCompatActivity() {
     private fun setViewsEnabled(view: View, enabled: Boolean) {
         if (view is ViewGroup) {
             for (i in 0 until view.childCount) {
-                setViewsEnabled(view.getChildAt(i), enabled)
+                val child = view.getChildAt(i)
+                if (child is ImageButton) {
+                    child.visibility = if (enabled) View.VISIBLE else View.GONE
+                }
+                if (child is CheckBox) {
+                    child.isEnabled = enabled
+                }
+                setViewsEnabled(child, enabled)
             }
         } else if (view is EditText) {
             view.isEnabled = enabled
@@ -181,7 +192,8 @@ class WorkoutDetailsActivity : AppCompatActivity() {
                             exercise.name,
                             exercise.sets.toString(),
                             exercise.reps.toString(),
-                            exercise.instructions.orEmpty()
+                            exercise.instructions.orEmpty(),
+                            exercise.isCompleted
                         )
                     }
                 }
@@ -207,14 +219,23 @@ class WorkoutDetailsActivity : AppCompatActivity() {
         name: String = "",
         sets: String = "",
         reps: String = "",
-        instr: String = ""
+        instr: String = "",
+        isCompleted: Boolean = false
     ) {
         val mainLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(0, 16, 0, 16)
         }
 
-        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
+        val cbComplete = CheckBox(this).apply {
+            isEnabled = isEditMode
+            isChecked = isCompleted
+        }
 
         val etName = EditText(this).apply {
             hint = "Name"; setText(name); isEnabled = isEditMode
@@ -231,7 +252,18 @@ class WorkoutDetailsActivity : AppCompatActivity() {
             InputType.TYPE_CLASS_NUMBER
         }
 
-        row.addView(etName); row.addView(etSets); row.addView(etReps)
+        val btnDelete = ImageButton(this).apply {
+            setImageResource(android.R.drawable.ic_menu_delete)
+            setBackgroundColor(Color.TRANSPARENT)
+            visibility = if (isEditMode) View.VISIBLE else View.GONE
+            setOnClickListener { exerciseContainer.removeView(mainLayout) }
+        }
+
+        row.addView(cbComplete)
+        row.addView(etName)
+        row.addView(etSets)
+        row.addView(etReps)
+        row.addView(btnDelete)
 
         val etInstr = EditText(this).apply {
             hint = "Instructions"; setText(instr); isEnabled = isEditMode
@@ -245,16 +277,33 @@ class WorkoutDetailsActivity : AppCompatActivity() {
 
     private fun addEquipmentField(name: String = "", remark: String = "") {
         val parent = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
             setPadding(0, 8, 0, 8)
         }
+
+        val textContainer = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(0, -2, 1f)
+        }
+
         val etName =
             EditText(this).apply { hint = "Equipment"; setText(name); isEnabled = isEditMode }
         val etRem =
             EditText(this).apply { hint = "Remark"; setText(remark); isEnabled = isEditMode }
 
-        parent.addView(etName)
-        parent.addView(etRem)
+        textContainer.addView(etName)
+        textContainer.addView(etRem)
+
+        val btnDelete = ImageButton(this).apply {
+            setImageResource(android.R.drawable.ic_menu_delete)
+            setBackgroundColor(Color.TRANSPARENT)
+            visibility = if (isEditMode) View.VISIBLE else View.GONE
+            setOnClickListener { equipmentContainer.removeView(parent) }
+        }
+
+        parent.addView(textContainer)
+        parent.addView(btnDelete)
         equipmentContainer.addView(parent)
     }
 
@@ -269,37 +318,38 @@ class WorkoutDetailsActivity : AppCompatActivity() {
 
         val workoutId = workout?.id ?: 0
 
-        // Retrieve Exercises - Both edited and newly added
         val exerciseList = mutableListOf<Exercise>()
         for (i in 0 until exerciseContainer.childCount) {
             val mainLayout = exerciseContainer.getChildAt(i) as? LinearLayout ?: continue
             val row = mainLayout.getChildAt(0) as? LinearLayout ?: continue
 
-            val name = (row.getChildAt(0) as? EditText)?.text.toString()
-            val sets = (row.getChildAt(1) as? EditText)?.text.toString()
-            val reps = (row.getChildAt(2) as? EditText)?.text.toString()
+            val name = (row.getChildAt(1) as? EditText)?.text.toString()
+            val sets = (row.getChildAt(2) as? EditText)?.text.toString()
+            val reps = (row.getChildAt(3) as? EditText)?.text.toString()
             val instr = (mainLayout.getChildAt(1) as? EditText)?.text.toString()
+            val isCompleted = (row.getChildAt(0) as? CheckBox)?.isChecked
 
             if (name.isNotBlank()) {
                 exerciseList.add(
                     Exercise(
                         name = name,
-                        sets = sets.toInt(),
-                        reps = reps.toInt(),
+                        sets = sets.toIntOrNull() ?: 0,
+                        reps = reps.toIntOrNull() ?: 0,
                         instructions = instr,
                         workoutId = workoutId,
                         imageUrl = null,
+                        isCompleted = isCompleted ?: false
                     )
                 )
             }
         }
 
-        // Retrieve Equipments - Both edited and newly added
         val equipmentList = mutableListOf<Equipment>()
         for (i in 0 until equipmentContainer.childCount) {
             val parent = equipmentContainer.getChildAt(i) as? LinearLayout ?: continue
-            val name = (parent.getChildAt(0) as? EditText)?.text.toString()
-            val remark = (parent.getChildAt(1) as? EditText)?.text.toString()
+            val textContainer = parent.getChildAt(0) as? LinearLayout ?: continue
+            val name = (textContainer.getChildAt(0) as? EditText)?.text.toString()
+            val remark = (textContainer.getChildAt(1) as? EditText)?.text.toString()
 
             if (name.isNotBlank()) {
                 equipmentList.add(Equipment(name = name, remark = remark, workoutId = workoutId))
